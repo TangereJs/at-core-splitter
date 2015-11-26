@@ -1,0 +1,102 @@
+<dom-module id="at-core-splitter">
+  <style>
+    :host {
+      height: 100%;
+    }
+
+    :host:hover {
+      cursor: w-resize;
+    }
+  </style>
+  <template>
+    <content></content>
+  </template>
+  <script>
+    'use strict';
+    Polymer({
+      is: 'at-core-splitter',
+      properties: {
+
+      },
+      _scopeCssViaAttr: true,
+      listeners: {
+        'track': 'onTrack'
+      },
+      _parentWidth: 0,
+      _leftStartWidth: 0,
+      _rightStartWidth: 0,
+      _debug_messages: false,
+      attached: function() {
+        var parentElement = this.parentElement;
+        var leftSibling = this.previousElementSibling;
+        var rightSibling = this.nextElementSibling;
+        var leftRect = leftSibling.getBoundingClientRect();
+        var rightRect = rightSibling.getBoundingClientRect();
+
+        var leftHeight = leftRect.height;
+        var rightHeight = rightRect.height;
+        var max = Math.max(leftHeight, rightHeight);
+
+        parentElement.style.height = max;
+
+      },
+      onTrack: function(event) {
+        var data = event.detail;
+        var state = data.state;
+        var
+          leftSibling = this.previousElementSibling,
+          rightSibling = this.nextElementSibling,
+          leftRect, rightRect,
+          newLeft, newRight,
+          newLeftPerc, newRightPerc;
+
+        switch (state) {
+          case 'start':
+            if (this._debug_messages) {
+              console.log('Tracking started!');
+            }
+            leftRect = leftSibling.getBoundingClientRect();
+            this._leftStartWidth = leftRect.width;
+            rightRect = rightSibling.getBoundingClientRect();
+            this._rightStartWidth = rightRect.width;
+            this._parentWidth = this._leftStartWidth + this._rightStartWidth;
+            if (this._debug_messages) {
+              console.log("left, right = " + this._leftStartWidth + ", " + this._rightStartWidth);
+            }
+            break;
+          case 'track':
+            if (this._debug_messages) {
+              console.log('Tracking in progress... ' + data.dx + ', ' + data.dy);
+            }
+            newLeft = this._leftStartWidth + data.dx;
+            newRight = this._rightStartWidth - data.dx;
+            newLeftPerc = (newLeft / this._parentWidth) * 100;
+            newRightPerc = (newRight / this._parentWidth) * 100;
+            if (newLeftPerc < 0) {
+              newLeftPerc = 0;
+            }
+            if (newLeftPerc > 100) {
+              newLeftPerc = 100;
+            }
+            if (newRightPerc < 0) {
+              newRightPerc = 0;
+            }
+            if (newRightPerc > 100) {
+              newRightPerc = 100;
+            }
+            leftSibling.style.right = newRightPerc + '%';
+            rightSibling.style.left = newLeftPerc + '%';
+            this.style.left = newLeftPerc + '%';
+            break;
+          case 'end':
+            if (this._debug_messages) {
+              console.log('Tracking ended!');
+            }
+            this._leftStartWidth = 0;
+            this._rightStartWidth = 0;
+            break;
+        }
+      }
+    });
+  </script>
+</dom-module>

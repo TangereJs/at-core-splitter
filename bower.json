@@ -1,0 +1,8 @@
+{
+  "name": "at-core-splitter",
+  "private": true,
+  "dependencies": {
+    "webcomponentsjs": "webcomponents/webcomponentsjs#master",
+    "polymer": "polymer/polymer#master"
+  }
+}
