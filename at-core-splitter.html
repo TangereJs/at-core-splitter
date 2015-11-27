@@ -87,7 +87,9 @@
       // Listen for resize requests on parent, since splitter is peer to resizables
       resizerIsPeer: true,
       ready: function() {
-        this.directionChanged();
+        this.async(function () {
+          this.directionChanged();          
+        });
       },
       attached: function() {
         this.addEventListener('iron-resize', this.ironResizeHandler);
