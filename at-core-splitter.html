@@ -1,99 +1,151 @@
+<link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
+
 <dom-module id="at-core-splitter">
   <style>
     :host {
-      height: 100%;
+      display: block;
+      width: 12px;
+      background: #efefef url(handle.svg) no-repeat center;
+      box-shadow: inset 0 0 2px 1px #ccc;
+      cursor: col-resize;
     }
 
-    :host:hover {
-      cursor: w-resize;
+    :host(.horizontal) {
+      width: auto;
+      height: 12px;
+      cursor: row-resize;
+      background-image: url(handle-h.svg);
+    }
+
+    :host(:hover, :active) {
+      background-color: #ddd;
     }
   </style>
-  <template>
-    <content></content>
-  </template>
+  <template></template>
   <script>
     'use strict';
     Polymer({
       is: 'at-core-splitter',
       properties: {
-
+        /**
+         * Possible values are `left`, `right`, `up` and `down`.
+         *
+         * @attribute direction
+         * @type string
+         * @default 'left'
+         */
+        direction: {
+          type: String,
+          value: 'left'
+        },
+        /**
+         * Minimum width to which the splitter target can be sized, e.g.
+         * `minSize="100px"`
+         *
+         * @attribute minSize
+         * @type string
+         * @default ''
+         */
+        minSize: {
+          type: String,
+          value: ''
+        },
+        /**
+         * Locks the split bar so it can't be dragged.
+         *
+         * @attribute locked
+         * @type boolean
+         * @default false
+         */
+        locked: {
+          type: Boolean,
+          value: false
+        },
+        /**
+         * By default the parent and siblings of the splitter are set to overflow hidden. This helps
+         * avoid elements bleeding outside the splitter regions. Set this property to true to allow
+         * these elements to overflow.
+         *
+         * @attribute allowOverflow
+         * @type boolean
+         * @default false
+         */
+        allowOverflow: {
+          type: Boolean,
+          value: false
+        },
       },
       _scopeCssViaAttr: true,
       listeners: {
-        'track': 'onTrack'
+        'track': 'onTrack',
+        'down': 'preventSelection'
       },
-      _parentWidth: 0,
-      _leftStartWidth: 0,
-      _rightStartWidth: 0,
-      _debug_messages: false,
+      observers: [
+        'targetChanged(target)'
+      ],
+      behaviors: [Polymer.IronResizableBehavior],
+      // Listen for resize requests on parent, since splitter is peer to resizables
+      resizerIsPeer: true,
+      ready: function() {
+        this.directionChanged();
+      },
       attached: function() {
-        var parentElement = this.parentElement;
-        var leftSibling = this.previousElementSibling;
-        var rightSibling = this.nextElementSibling;
-        var leftRect = leftSibling.getBoundingClientRect();
-        var rightRect = rightSibling.getBoundingClientRect();
-
-        var leftHeight = leftRect.height;
-        var rightHeight = rightRect.height;
-        var max = Math.max(leftHeight, rightHeight);
-
-        parentElement.style.height = max;
-
+        this.addEventListener('iron-resize', this.ironResizeHandler);
+        this.async(function() {
+          if (!this.allowOverflow) {
+            this.parentNode.style.overflow = this.nextElementSibling.style.overflow =
+              this.previousElementSibling.style.overflow = 'hidden';
+          }
+        });
       },
+      detached: function() {
+        this.removeEventListener('iron-resize', this.ironResizeHandler);
+      },
+      ironResizeHandler: function(event) {
+        this.update();
+      },
+      directionChanged: function() {
+        this.isNext = this.direction === 'right' || this.direction === 'down';
+        this.horizontal = this.direction === 'up' || this.direction === 'down';
+        this.update();
+      },
+      update: function() {
+        this.target = this.isNext ? this.nextElementSibling : this.previousElementSibling;
+        this.dimension = this.horizontal ? 'height' : 'width';
+        this.classList.toggle('horizontal', this.horizontal);
+      },
+      targetChanged: function(old) {
+        if (old) {
+          old.style[old.__splitterMinSize] = '';
+        }
+        var min = this.target.__splitterMinSize = this.horizontal ? 'minHeight' : 'minWidth';
+        this.target.style[min] = this.minSize;
+      },
+      preventSelection: function(e) {
+        e.preventDefault();
+      },
+
       onTrack: function(event) {
         var data = event.detail;
         var state = data.state;
-        var
-          leftSibling = this.previousElementSibling,
-          rightSibling = this.nextElementSibling,
-          leftRect, rightRect,
-          newLeft, newRight,
-          newLeftPerc, newRightPerc;
 
         switch (state) {
           case 'start':
-            if (this._debug_messages) {
-              console.log('Tracking started!');
-            }
-            leftRect = leftSibling.getBoundingClientRect();
-            this._leftStartWidth = leftRect.width;
-            rightRect = rightSibling.getBoundingClientRect();
-            this._rightStartWidth = rightRect.width;
-            this._parentWidth = this._leftStartWidth + this._rightStartWidth;
-            if (this._debug_messages) {
-              console.log("left, right = " + this._leftStartWidth + ", " + this._rightStartWidth);
-            }
+            this.update();
+            this.size = parseInt(getComputedStyle(this.target)[this.dimension]);
+
             break;
           case 'track':
-            if (this._debug_messages) {
-              console.log('Tracking in progress... ' + data.dx + ', ' + data.dy);
+            if (this.locked) {
+              return;
             }
-            newLeft = this._leftStartWidth + data.dx;
-            newRight = this._rightStartWidth - data.dx;
-            newLeftPerc = (newLeft / this._parentWidth) * 100;
-            newRightPerc = (newRight / this._parentWidth) * 100;
-            if (newLeftPerc < 0) {
-              newLeftPerc = 0;
-            }
-            if (newLeftPerc > 100) {
-              newLeftPerc = 100;
-            }
-            if (newRightPerc < 0) {
-              newRightPerc = 0;
-            }
-            if (newRightPerc > 100) {
-              newRightPerc = 100;
-            }
-            leftSibling.style.right = newRightPerc + '%';
-            rightSibling.style.left = newLeftPerc + '%';
-            this.style.left = newLeftPerc + '%';
+            var d = data[this.horizontal ? 'dy' : 'dx'];
+            this.target.style[this.dimension] = this.size + (this.isNext ? -d : d) + 'px';
+            this.notifyResize();
+
             break;
           case 'end':
-            if (this._debug_messages) {
-              console.log('Tracking ended!');
-            }
-            this._leftStartWidth = 0;
-            this._rightStartWidth = 0;
+
             break;
         }
       }

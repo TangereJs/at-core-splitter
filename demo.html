@@ -6,89 +6,65 @@
   <title>at-core-splitter demo</title>
   <script src="../webcomponentsjs/webcomponents-lite.js" charset="utf-8"></script>
   <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
   <link rel="import" href="at-core-splitter.html">
   <style media="screen">
-    .content-container {
-      margin: 0 10%;
+    .container {
+      height: 240px;
+      border: 4px solid #aaa;
     }
 
-    .split-pane-container {
-      position: relative;
-      background-color: #ccaaff;
-      /*height: 100%;*/
-      /*height: 750px;*/
-      /*display: table;*/
-      width: 100%;
-      float: left;
-      overflow: hidden;
+    #box1,
+    #box3,
+    #box5,
+    #box6 {
+      width: 100px;
     }
 
-    .splitter {
-      position: absolute;
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      float: left;
-      /*display: table-cell;*/
-      width: 4px;
-      margin-left: -2px;
-      background-color: #ff00cc;
-      z-index: 100;
-    }
-
-    .split-pane {
-      position: absolute;
-      padding: 0 5%;
-      top: 0;
-      bottom: 0;
-      float: left;
-      /*display: table-cell;*/
-    }
-
-    .split-pane.left {
-      color: #FFFFFF;
-      background-color: #00AA11;
-      right: 50%;
-    }
-
-    .split-pane.right {
-      color: #FFFFFF;
-      background-color: #0011AA;
-      left: 50%;
-    }
-
-    .content {
-      margin: 0 5px;
-    }
-
-    .clear-both {
-      clear: both;
+    #box2,
+    #box4 {
+      height: 40px;
     }
   </style>
 </head>
 
 <body>
-  <div class="content-container">
-    <div class="split-pane-container">
-      <div class="split-pane left">
-        <p class="content">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-          in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-      </div>
-      <at-core-splitter class="splitter">
-        <object class="inside-splitter"></object>
-      </at-core-splitter>
-      <div class="split-pane right">
-        <p class="content">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-          in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
-      </div>
-      <div class="clear-both"></div>
-    </div>
-    <div class="clear-both"></div>
+  <div class="container horizontal layout">
+    <div>left (min: 128px)</div>
+    <at-core-splitter direction="left" min-size="128px"></at-core-splitter>
+    <div class="flex">right</div>
   </div>
+
+  <br>
+
+  <div class="container vertical layout">
+    <div id="box2">top</div>
+    <at-core-splitter direction="up"></at-core-splitter>
+    <div class="flex">bottom</div>
+  </div>
+
+  <br>
+
+  <div class="container horizontal layout">
+    <div id="box3">1</div>
+    <at-core-splitter direction="left"></at-core-splitter>
+    <div class="flex vertical layout">
+      <div id="box4">2</div>
+      <at-core-splitter direction="up"></at-core-splitter>
+      <div class="flex">3</div>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="container horizontal layout">
+    <div id="box5">left</div>
+    <at-core-splitter direction="left"></at-core-splitter>
+    <div class="flex">center</div>
+    <at-core-splitter direction="right"></at-core-splitter>
+    <div id="box6">right</div>
+  </div>
+
 </body>
 
 </html>

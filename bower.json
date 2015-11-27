@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "webcomponentsjs": "webcomponents/webcomponentsjs#master",
-    "polymer": "polymer/polymer#master"
+    "polymer": "polymer/polymer#master",
+    "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#master"
   }
 }
