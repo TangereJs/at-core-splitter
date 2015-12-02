@@ -95,8 +95,19 @@
         this.addEventListener('iron-resize', this.ironResizeHandler);
         this.async(function() {
           if (!this.allowOverflow) {
-            this.parentNode.style.overflow = this.nextElementSibling.style.overflow =
-              this.previousElementSibling.style.overflow = 'hidden';
+            // this.parentNode.style.overflow = this.nextElementSibling.style.overflow =
+              // this.previousElementSibling.style.overflow = 'hidden';
+              if (this.horizontal) {
+                this.parentNode.style['overflow-x'] = this.nextElementSibling.style['overflow-x'] =
+                  this.previousElementSibling.style['overflow-x'] = 'visible';
+                this.parentNode.style['overflow-y'] = this.nextElementSibling.style['overflow-y'] =
+                  this.previousElementSibling.style['overflow-y'] = 'hidden';
+              } else {
+                this.parentNode.style['overflow-x'] = this.nextElementSibling.style['overflow-x'] =
+                  this.previousElementSibling.style['overflow-x'] = 'hidden';
+                this.parentNode.style['overflow-y'] = this.nextElementSibling.style['overflow-y'] =
+                  this.previousElementSibling.style['overflow-y'] = 'visible';
+              }
           }
         });
       },
