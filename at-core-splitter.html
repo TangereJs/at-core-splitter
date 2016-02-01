@@ -9,14 +9,17 @@
       box-shadow: inset 0 0 2px 1px #ccc;
       cursor: col-resize;
     }
-    
+
     :host(.horizontal) {
-      width: auto;
-      height: 12px;
+      /* *ij* 01.02.2016 (dd-mm-yyyy) */
+      /* commenting these two solve the problem of missing splitter in IE11 */
+      /* this doesn't cause problems in Chrome 48 */
+      /*width: auto;*/
+      /*height: 12px;*/
       cursor: row-resize;
       background-image: url(handle-h.svg);
     }
-    
+
     :host(:hover, :active) {
       background-color: #ddd;
     }
@@ -83,87 +86,87 @@
       observers: [
         'targetChanged(target)'
       ],
-      $meta: [{
-        title: "resizable page sections",
-        playground: false
-      }],
       behaviors: [Polymer.IronResizableBehavior],
       // Listen for resize requests on parent, since splitter is peer to resizables
       resizerIsPeer: true,
-      ready: function () {
+      ready: function() {
         this.async(function () {
           this.directionChanged();
         });
       },
-      attached: function () {
+      attached: function() {
         this.addEventListener('iron-resize', this.ironResizeHandler);
-        this.async(function () {
+        this.async(function() {
           if (!this.allowOverflow) {
             // this.parentNode.style.overflow = this.nextElementSibling.style.overflow =
-            // this.previousElementSibling.style.overflow = 'hidden';
-            if (this.horizontal) {
-              this.parentNode.style['overflow-x'] = this.nextElementSibling.style['overflow-x'] =
-                this.previousElementSibling.style['overflow-x'] = 'visible';
-              this.parentNode.style['overflow-y'] = this.nextElementSibling.style['overflow-y'] =
-                this.previousElementSibling.style['overflow-y'] = 'hidden';
-            } else {
-              this.parentNode.style['overflow-x'] = this.nextElementSibling.style['overflow-x'] =
-                this.previousElementSibling.style['overflow-x'] = 'hidden';
-              this.parentNode.style['overflow-y'] = this.nextElementSibling.style['overflow-y'] =
-                this.previousElementSibling.style['overflow-y'] = 'visible';
-            }
+              // this.previousElementSibling.style.overflow = 'hidden';
+              if (this.horizontal) {
+                this.parentNode.style['overflow-x'] = this.nextElementSibling.style['overflow-x'] =
+                  this.previousElementSibling.style['overflow-x'] = 'visible';
+                this.parentNode.style['overflow-y'] = this.nextElementSibling.style['overflow-y'] =
+                  this.previousElementSibling.style['overflow-y'] = 'hidden';
+              } else {
+                this.parentNode.style['overflow-x'] = this.nextElementSibling.style['overflow-x'] =
+                  this.previousElementSibling.style['overflow-x'] = 'hidden';
+                this.parentNode.style['overflow-y'] = this.nextElementSibling.style['overflow-y'] =
+                  this.previousElementSibling.style['overflow-y'] = 'hidden';
+                // *ij* 01.02.2016 (dd-mm-yyyy)
+                // previous value for overflow-y is visible; this is causing vertical scrollbars in IE11
+                // setting this value to hidden is hiding the vertical scrollbars in IE11
+                // also in Chrome 48 at-core-splitter works correctly with overflow-y hidden
+              }
           }
         });
       },
-      detached: function () {
+      detached: function() {
         this.removeEventListener('iron-resize', this.ironResizeHandler);
       },
-      ironResizeHandler: function (event) {
+      ironResizeHandler: function(event) {
         this.update();
       },
-      directionChanged: function () {
+      directionChanged: function() {
         this.isNext = this.direction === 'right' || this.direction === 'down';
         this.horizontal = this.direction === 'up' || this.direction === 'down';
         this.update();
       },
-      update: function () {
+      update: function() {
         this.target = this.isNext ? this.nextElementSibling : this.previousElementSibling;
         this.dimension = this.horizontal ? 'height' : 'width';
         this.classList.toggle('horizontal', this.horizontal);
       },
-      targetChanged: function (old) {
+      targetChanged: function(old) {
         if (old) {
           old.style[old.__splitterMinSize] = '';
         }
         var min = this.target.__splitterMinSize = this.horizontal ? 'minHeight' : 'minWidth';
         this.target.style[min] = this.minSize;
       },
-      preventSelection: function (e) {
+      preventSelection: function(e) {
         e.preventDefault();
       },
 
-      onTrack: function (event) {
+      onTrack: function(event) {
         var data = event.detail;
         var state = data.state;
 
         switch (state) {
-        case 'start':
-          this.update();
-          this.size = parseInt(getComputedStyle(this.target)[this.dimension]);
+          case 'start':
+            this.update();
+            this.size = parseInt(getComputedStyle(this.target)[this.dimension]);
 
-          break;
-        case 'track':
-          if (this.locked) {
-            return;
-          }
-          var d = data[this.horizontal ? 'dy' : 'dx'];
-          this.target.style[this.dimension] = this.size + (this.isNext ? -d : d) + 'px';
-          this.notifyResize();
+            break;
+          case 'track':
+            if (this.locked) {
+              return;
+            }
+            var d = data[this.horizontal ? 'dy' : 'dx'];
+            this.target.style[this.dimension] = this.size + (this.isNext ? -d : d) + 'px';
+            this.notifyResize();
 
-          break;
-        case 'end':
+            break;
+          case 'end':
 
-          break;
+            break;
         }
       }
     });
