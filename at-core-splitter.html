@@ -132,7 +132,7 @@
       update: function() {
         this.target = this.isNext ? this.nextElementSibling : this.previousElementSibling;
         this.dimension = this.horizontal ? 'height' : 'width';
-        this.classList.toggle('horizontal', this.horizontal);
+        this.toggleClass('horizontal', this.horizontal, this);
       },
       targetChanged: function(old) {
         if (old) {

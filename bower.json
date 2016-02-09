@@ -6,5 +6,5 @@
     "polymer": "polymer/polymer#master",
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#master"
   },
-  "version": "0.0.1.14"
+  "version": "0.0.1.27"
 }
