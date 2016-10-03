@@ -1,30 +1,32 @@
+<link rel="import" href="../tangere/tangere.html">
 <link rel="import" href="../iron-resizable-behavior/iron-resizable-behavior.html">
 
 <dom-module id="at-core-splitter">
-  <style>
-    :host {
-      display: block;
-      width: 12px;
-      background: #efefef url(handle.svg) no-repeat center;
-      box-shadow: inset 0 0 2px 1px #ccc;
-      cursor: col-resize;
-    }
+  <template>
+    <style>
+      :host {
+        display: block;
+        width: 12px;
+        background: #efefef url(handle.svg) no-repeat center;
+        box-shadow: inset 0 0 2px 1px #ccc;
+        cursor: col-resize;
+      }
 
-    :host(.horizontal) {
-      /* *ij* 01.02.2016 (dd-mm-yyyy) */
-      /* commenting these two solve the problem of missing splitter in IE11 */
-      /* this doesn't cause problems in Chrome 48 */
-      /*width: auto;*/
-      /*height: 12px;*/
-      cursor: row-resize;
-      background-image: url(handle-h.svg);
-    }
+      :host(.horizontal) {
+        /* *ij* 01.02.2016 (dd-mm-yyyy) */
+        /* commenting these two solve the problem of missing splitter in IE11 */
+        /* this doesn't cause problems in Chrome 48 */
+        /*width: auto;*/
+        /*height: 12px;*/
+        cursor: row-resize;
+        background-image: url(handle-h.svg);
+      }
 
-    :host(:hover, :active) {
-      background-color: #ddd;
-    }
-  </style>
-  <template></template>
+      :host(:hover, :active) {
+        background-color: #ddd;
+      }
+    </style>
+  </template>
   <script>
     'use strict';
     Polymer({
@@ -78,7 +80,6 @@
           value: false
         },
       },
-      _scopeCssViaAttr: true,
       listeners: {
         'track': 'onTrack',
         'down': 'preventSelection'
