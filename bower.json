@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "tangere": "TangereJs/tangere#0.8-preview",
+    "at-doc-viewer": "TangereJs/at-doc-viewer#0.8-preview",
     "iron-resizable-behavior": "PolymerElements/iron-resizable-behavior#master"
   },
   "version": "0.0.1.32"
