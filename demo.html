@@ -6,8 +6,9 @@
   <title>at-core-splitter demo</title>
   <script src="../webcomponentsjs/webcomponents-lite.js" charset="utf-8"></script>
   <link rel="import" href="at-core-splitter.html">
-  <link rel="import" href="../iron-flex-layout/classes/iron-flex-layout.html">
-  <style media="screen">
+  <link rel="import" href="../at-core-style-classes/at-core-style-classes.html" />
+
+  <style is="custom-style" include="at-core-style-classes">
     .container {
       height: 240px;
       border: 4px solid #aaa;
@@ -28,38 +29,38 @@
 </head>
 
 <body>
-  <div class="container horizontal layout">
+  <div class="container layout-horizontal">
     <div>left (min: 128px)</div>
     <at-core-splitter direction="left" min-size="128px"></at-core-splitter>
-    <div class="flex">right</div>
+    <div class="layout-flex">right</div>
   </div>
 
   <br>
 
-  <div class="container vertical layout">
+  <div class="container layout-vertical">
     <div id="box2">top</div>
     <at-core-splitter direction="up"></at-core-splitter>
-    <div class="flex">bottom</div>
+    <div class="layout-flex">bottom</div>
   </div>
 
   <br>
 
-  <div class="container horizontal layout">
+  <div class="container layout-horizontal">
     <div id="box3">1</div>
     <at-core-splitter direction="left"></at-core-splitter>
-    <div class="flex vertical layout">
+    <div class="layout-flex layout-vertical">
       <div id="box4">2</div>
       <at-core-splitter direction="up"></at-core-splitter>
-      <div class="flex">3</div>
+      <div class="layout-flex">3</div>
     </div>
   </div>
 
   <br>
 
-  <div class="container horizontal layout">
+  <div class="container layout-horizontal">
     <div id="box5">left</div>
     <at-core-splitter direction="left"></at-core-splitter>
-    <div class="flex">center</div>
+    <div class="layout-flex">center</div>
     <at-core-splitter direction="right"></at-core-splitter>
     <div id="box6">right</div>
   </div>
