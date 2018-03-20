@@ -13,11 +13,10 @@
       }
 
       :host(.horizontal) {
-        /* *ij* 01.02.2016 (dd-mm-yyyy) */
-        /* commenting these two solve the problem of missing splitter in IE11 */
-        /* this doesn't cause problems in Chrome 48 */
-        /*width: auto;*/
-        /*height: 12px;*/
+        /* *ij* 2018-03-20 (yyyy-mm-dd) */
+        /* uncommented width and height because splitter doesn't render for up direction in all browsers */
+        width: auto;
+        height: 12px;
         cursor: row-resize;
         background-image: url(handle-h.svg);
       }
